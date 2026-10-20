@@ -1,0 +1,39 @@
+@baseUrl = http://localhost:5282
+@bookingId = 1
+
+### Create a booking
+POST {{baseUrl}}/api/bookings
+Content-Type: application/json
+
+{
+  "customerName": "Avery Jones",
+  "checkInDate": "2026-07-10T15:00:00-05:00",
+  "checkOutDate": "2026-07-12T11:00:00-05:00",
+  "roomType": "Deluxe"
+}
+
+### Get a booking
+GET {{baseUrl}}/api/bookings/{{bookingId}}
+Accept: application/json
+
+### Get bookings overlapping a date range
+GET {{baseUrl}}/api/bookings/between?startDate=2026-07-11T00%3A00%3A00-05%3A00&endDate=2026-07-13T00%3A00%3A00-05%3A00
+Accept: application/json
+
+### Update a booking
+PUT {{baseUrl}}/api/bookings/{{bookingId}}
+Content-Type: application/json
+
+{
+  "customerName": "Avery Jones",
+  "checkInDate": "2026-07-11T15:00:00-05:00",
+  "checkOutDate": "2026-07-13T11:00:00-05:00",
+  "roomType": "Suite"
+}
+
+### Cancel a booking
+DELETE {{baseUrl}}/api/bookings/{{bookingId}}
+
+### Missing booking returns 404
+GET {{baseUrl}}/api/bookings/999999
+Accept: application/json
