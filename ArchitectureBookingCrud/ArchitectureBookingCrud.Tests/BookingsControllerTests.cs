@@ -125,12 +125,34 @@ public sealed class BookingsControllerTests
     }
 
     [Fact]
+    public async Task DeleteBooking_ReturnsNoContentWhenBookingExists()
+    {
+        var controller = CreateController(service =>
+            service.Setup(x => x.DeleteBookingAsync(7, CancellationToken)).ReturnsAsync(true));
+
+        var result = await controller.DeleteBooking(7, CancellationToken);
+
+        Assert.IsType<NoContentResult>(result);
+    }
+
+    [Fact]
     public async Task CancelBooking_ReturnsNotFoundWhenBookingDoesNotExist()
     {
         var controller = CreateController(service =>
             service.Setup(x => x.CancelBookingAsync(404, CancellationToken)).ReturnsAsync(false));
 
         var result = await controller.CancelBooking(404, CancellationToken);
+
+        Assert.IsType<NotFoundResult>(result);
+    }
+
+    [Fact]
+    public async Task DeleteBooking_ReturnsNotFoundWhenBookingDoesNotExist()
+    {
+        var controller = CreateController(service =>
+            service.Setup(x => x.DeleteBookingAsync(404, CancellationToken)).ReturnsAsync(false));
+
+        var result = await controller.DeleteBooking(404, CancellationToken);
 
         Assert.IsType<NotFoundResult>(result);
     }

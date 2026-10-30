@@ -72,6 +72,15 @@ public sealed class BookingsController(IBookingService bookingService) : Control
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteBooking(int id, CancellationToken cancellationToken)
+    {
+        var deleted = await bookingService.DeleteBookingAsync(id, cancellationToken);
+        return deleted ? NoContent() : NotFound();
+    }
+
+    [HttpPost("{id:int}/cancel")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> CancelBooking(int id, CancellationToken cancellationToken)
     {
         var cancelled = await bookingService.CancelBookingAsync(id, cancellationToken);

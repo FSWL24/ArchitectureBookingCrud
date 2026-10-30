@@ -11,5 +11,6 @@ public interface IBookingRepository
         DateTimeOffset endDate,
         CancellationToken cancellationToken);
     Task<Booking?> UpdateAsync(Booking booking, CancellationToken cancellationToken);
+    Task<bool> DeleteAsync(int id, CancellationToken cancellationToken);
     Task<bool> CancelAsync(int id, CancellationToken cancellationToken);
 }

@@ -69,6 +69,19 @@ public sealed class BookingServiceTests
     }
 
     [Fact]
+    public async Task DeleteBooking_RemovesBooking()
+    {
+        var service = CreateService();
+        var booking = await service.CreateBookingAsync(ValidBooking(), CancellationToken.None);
+
+        var deleted = await service.DeleteBookingAsync(booking.Id, CancellationToken.None);
+        var retrieved = await service.GetBookingAsync(booking.Id, CancellationToken.None);
+
+        Assert.True(deleted);
+        Assert.Null(retrieved);
+    }
+
+    [Fact]
     public async Task CreateBooking_RejectsInvalidDateRange()
     {
         var service = CreateService();

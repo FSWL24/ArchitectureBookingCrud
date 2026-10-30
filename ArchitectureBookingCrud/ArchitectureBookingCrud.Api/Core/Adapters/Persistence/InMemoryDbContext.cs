@@ -70,6 +70,14 @@ public sealed class InMemoryDbContext
         }
     }
 
+    public bool Delete(int id)
+    {
+        lock (_gate)
+        {
+            return _bookings.Remove(id);
+        }
+    }
+
     private static Booking Copy(Booking booking) => new()
     {
         Id = booking.Id,

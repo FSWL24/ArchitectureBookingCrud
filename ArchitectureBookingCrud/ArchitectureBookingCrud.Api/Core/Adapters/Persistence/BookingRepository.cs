@@ -37,4 +37,10 @@ public sealed class BookingRepository(InMemoryDbContext context) : IBookingRepos
         cancellationToken.ThrowIfCancellationRequested();
         return Task.FromResult(context.Cancel(id));
     }
+
+    public Task<bool> DeleteAsync(int id, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult(context.Delete(id));
+    }
 }

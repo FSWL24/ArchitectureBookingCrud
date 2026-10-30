@@ -2,11 +2,24 @@ using ArchitectureBookingCrud.Api.Core.Adapters.Persistence;
 using ArchitectureBookingCrud.Api.Core.Domain.Interfaces;
 using ArchitectureBookingCrud.Api.Core.Domain.Services;
 
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var persistenceProvider = builder.Configuration["Persistence:Provider"] ?? "InMemory";
+if (string.Equals(persistenceProvider, "SQLite", StringComparison.OrdinalIgnoreCase))
+{
+    var connectionString = builder.Configuration.GetConnectionString("Bookings")
+        ?? "Data Source=bookings.db";
+    builder.Services.AddDbContext<BookingSqliteDbContext>(options => options.UseSqlite(connectionString));
+}
+else if (!string.Equals(persistenceProvider, "InMemory", StringComparison.OrdinalIgnoreCase))
+{
+    throw new InvalidOperationException(
+        $"Unsupported persistence provider '{persistenceProvider}'. Use 'InMemory' or 'SQLite'.");
+}
 
 builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
@@ -17,10 +30,21 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddScoped<IBookingService, BookingService>();
-builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+builder.Services.AddScoped<BookingRepository>();
+builder.Services.AddScoped<SqliteBookingRepository>();
+builder.Services.AddScoped<BookingRepositoryFactory>();
+builder.Services.AddScoped<IBookingRepository>(serviceProvider =>
+    serviceProvider.GetRequiredService<BookingRepositoryFactory>().Create());
 builder.Services.AddSingleton<InMemoryDbContext>();
 
 var app = builder.Build();
+
+if (string.Equals(persistenceProvider, "SQLite", StringComparison.OrdinalIgnoreCase))
+{
+    await using var scope = app.Services.CreateAsyncScope();
+    var database = scope.ServiceProvider.GetRequiredService<BookingSqliteDbContext>();
+    await database.Database.EnsureCreatedAsync();
+}
 
 
 if (app.Environment.IsDevelopment())

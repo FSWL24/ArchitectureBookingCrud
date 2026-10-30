@@ -38,6 +38,9 @@ public sealed class BookingService(IBookingRepository bookingRepository) : IBook
     public Task<bool> CancelBookingAsync(int id, CancellationToken cancellationToken) =>
         bookingRepository.CancelAsync(id, cancellationToken);
 
+    public Task<bool> DeleteBookingAsync(int id, CancellationToken cancellationToken) =>
+        bookingRepository.DeleteAsync(id, cancellationToken);
+
     private static void ValidateBooking(Booking booking)
     {
         if (string.IsNullOrWhiteSpace(booking.CustomerName))
