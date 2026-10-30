@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^dotnet --version && find \\. -maxdepth 3 -type f -not -path '\\*/bin/\\*' -not -path '\\*/obj/\\*' \\| sort$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}
